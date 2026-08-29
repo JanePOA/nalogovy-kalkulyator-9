@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Налоговый калькулятор для ИП и ООО</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"]{--color-bg:#f6f7f7;--color-surface:#fff;--color-surface-2:#fbfbfb;--color-surface-offset:#eef0f0;--color-surface-dynamic:#dee2e2;--color-divider:#e2e5e5;--color-border:#d7dbdb;--color-text:#191f1f;--color-text-muted:#5c6666;--color-text-faint:#9aa3a3;--color-text-inverse:#f7f9f9;--color-primary:#0a6e6e;--color-primary-highlight:#cedcd8;--color-success:#2f7a3e;--color-success-highlight:#dcecdf;--color-error:#a13232;--color-warning:#93591c;--color-blue:#23628f;--color-purple:#6a4a9c;--color-gold:#a3781a;--radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;--transition-interactive:180ms cubic-bezier(.16,1,.3,1);--shadow-sm:0 1px 2px oklch(.2 .01 195/.06);--shadow-md:0 4px 14px oklch(.2 .01 195/.08);--font-display:'General Sans','Helvetica Neue',sans-serif;--font-body:'Satoshi','General Sans',sans-serif}
+[data-theme="dark"]{--color-bg:#121616;--color-surface:#171c1c;--color-surface-2:#1b2020;--color-surface-offset:#1d2222;--color-surface-dynamic:#2b3232;--color-divider:#232929;--color-border:#313939;--color-text:#d9dede;--color-text-muted:#8b9696;--color-text-faint:#5f6a6a;--color-text-inverse:#14191a;--color-primary:#4bb3ab;--color-primary-highlight:#313b3b;--color-success:#6fbd7c;--color-success-highlight:#223a29;--color-error:#d78888;--color-warning:#d8ab5f;--color-blue:#6cb0e0;--color-purple:#b39be0;--color-gold:#d8bb6a}
+:root{--text-xs:clamp(.6875rem,.66rem + .1vw,.75rem);--text-sm:clamp(.75rem,.72rem + .15vw,.8125rem);--text-base:clamp(.8125rem,.79rem + .15vw,.875rem);--text-lg:clamp(.9375rem,.9rem + .2vw,1.0625rem);--text-xl:clamp(1.0625rem,1rem + .35vw,1.25rem);--space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;--space-6:1.5rem;--space-8:2rem}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html,body{height:100%;overflow:hidden}body{font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg)}button,input{font:inherit;color:inherit}button{background:none;border:none;cursor:pointer}table{border-collapse:collapse;width:100%}.tnum{font-variant-numeric:tabular-nums lining-nums}
+.dashboard{display:grid;grid-template-columns:320px 1fr 320px;grid-template-rows:auto 1fr;height:100dvh}.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-3) var(--space-5);border-bottom:1px solid var(--color-divider);background:var(--color-surface)}.brand{display:flex;align-items:center;gap:var(--space-2)}.brand-name{font-family:var(--font-display);font-weight:600;font-size:var(--text-sm);line-height:1.2}.brand-name small{display:block;font-family:var(--font-body);font-weight:400;font-size:var(--text-xs);color:var(--color-text-muted)}.topbar-actions{display:flex;gap:var(--space-2)}.iconbtn{width:32px;height:32px;border-radius:var(--radius-full);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted)}.iconbtn:hover{background:var(--color-surface-offset);color:var(--color-text)}.iconbtn svg{width:16px;height:16px}.col{overflow-y:auto;overscroll-behavior:contain}.col-inputs{grid-row:2;grid-column:1;border-right:1px solid var(--color-divider);background:var(--color-surface);padding:var(--space-4)}.col-main{grid-row:2;grid-column:2;padding:var(--space-4);display:flex;flex-direction:column;min-height:0}.col-detail{grid-row:2;grid-column:3;border-left:1px solid var(--color-divider);background:var(--color-surface);padding:var(--space-4)}
+@media (max-width:1180px){.dashboard{grid-template-columns:280px 1fr}.col-detail{display:none}}@media (max-width:860px){.dashboard{grid-template-columns:1fr;grid-template-rows:auto auto 1fr auto}.col-inputs{grid-row:2;grid-column:1;border-right:none;border-bottom:1px solid var(--color-divider);max-height:38dvh}.col-main{grid-row:3;grid-column:1}.col-detail{display:none}.mobile-summary{display:flex!important}}
+.panel-title{font-size:var(--text-xs);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-muted);margin-bottom:var(--space-3);font-family:var(--font-body)}.field{margin-bottom:var(--space-4)}.field label{display:flex;align-items:center;gap:var(--space-1);font-size:var(--text-xs);font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.02em;margin-bottom:var(--space-1)}.input-wrap{position:relative}.input-wrap input[type=number]{width:100%;padding:var(--space-2) var(--space-3);padding-right:var(--space-8);border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-2);font-size:var(--text-sm)}.input-suffix{position:absolute;right:var(--space-3);top:50%;transform:translateY(-50%);color:var(--color-text-faint);font-size:var(--text-xs)}.segmented{display:flex;background:var(--color-surface-offset);border-radius:var(--radius-md);padding:3px;gap:2px}.segmented button{flex:1;padding:var(--space-2);border-radius:calc(var(--radius-md) - 2px);font-size:var(--text-sm);font-weight:500;color:var(--color-text-muted)}.segmented button.active{background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-sm)}.range-row{display:flex;align-items:center;gap:var(--space-2)}.range-row input[type=range]{flex:1;accent-color:var(--color-primary)}.range-val{min-width:36px;text-align:right;font-weight:600;font-size:var(--text-xs)}.field-hint{font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-1)}
+.kpi-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);margin-bottom:var(--space-4)}.kpi{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);box-shadow:var(--shadow-sm)}.kpi.highlight{border-color:var(--color-primary);background:color-mix(in oklch,var(--color-primary) 5%,var(--color-surface))}.kpi-label{font-size:var(--text-xs);color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:var(--space-1)}.kpi-value{font-size:var(--text-lg);font-weight:700;font-family:var(--font-display)}.kpi-sub{font-size:var(--text-xs);color:var(--color-text-faint);margin-top:2px}.best-badge{display:inline-flex;align-items:center;gap:4px;background:var(--color-success-highlight);color:var(--color-success);font-size:var(--text-xs);font-weight:600;padding:1px 7px;border-radius:var(--radius-full);margin-top:var(--space-1)}.section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2)}.section-title h2{font-size:var(--text-sm);font-weight:700;font-family:var(--font-body)}
+.regime-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(180px,100%),1fr));gap:var(--space-2);margin-bottom:var(--space-4)}.regime-card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--space-3);box-shadow:var(--shadow-sm);position:relative;cursor:pointer}.regime-card.best{border-color:var(--color-primary);box-shadow:0 0 0 1px var(--color-primary),var(--shadow-md)}.regime-card.best::before{content:"Оптимально";position:absolute;top:-9px;left:var(--space-3);background:var(--color-primary);color:var(--color-text-inverse);font-size:9px;font-weight:600;padding:1px 8px;border-radius:var(--radius-full)}.regime-name{font-size:var(--text-xs);font-weight:600;margin-bottom:1px}.regime-vat{font-size:var(--text-xs);color:var(--color-text-muted);margin-bottom:var(--space-2)}.regime-profit{font-size:var(--text-base);font-weight:700;font-family:var(--font-display)}.regime-profit.neg{color:var(--color-error)}.regime-bar-track{height:4px;background:var(--color-surface-offset);border-radius:var(--radius-full);margin-top:var(--space-2);overflow:hidden}.regime-bar-fill{height:100%;border-radius:var(--radius-full)}.regime-margin{font-size:9px;color:var(--color-text-faint);margin-top:var(--space-1)}
+.chart-wrap{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3);box-shadow:var(--shadow-sm);flex:1;min-height:0}.chart-canvas-holder{height:100%;min-height:180px;position:relative}.detail-tabs{display:flex;gap:var(--space-1);overflow-x:auto;padding-bottom:var(--space-2);margin-bottom:var(--space-2);scrollbar-width:none}.detail-tab{white-space:nowrap;padding:4px var(--space-3);border-radius:var(--radius-full);border:1px solid var(--color-border);font-size:var(--text-xs);color:var(--color-text-muted);flex-shrink:0}.detail-tab.active{background:var(--color-primary);color:var(--color-text-inverse);border-color:var(--color-primary)}.pl-table{font-size:var(--text-xs)}.pl-table tr{border-bottom:1px solid var(--color-divider)}.pl-table td{padding:var(--space-2) 2px}.pl-table td:first-child{color:var(--color-text-muted)}.pl-table td:nth-child(2){text-align:right;font-weight:600}.pl-table td:nth-child(3){text-align:right;color:var(--color-text-faint);width:52px}.pl-table tr.total td{font-weight:700;color:var(--color-text);border-top:2px solid var(--color-border)}.pl-table tr.subtotal td{font-weight:600;color:var(--color-text);border-top:1px dashed var(--color-border)}.pl-table tr.tax td{color:var(--color-warning)}.pl-table tr.net td{color:var(--color-primary);font-size:var(--text-sm)}.pl-table tr.ded td{color:var(--color-success)}.pl-table tr.info td{color:var(--color-text-faint);font-style:italic}.pl-bar{display:flex;height:22px;border-radius:var(--radius-md);overflow:hidden;margin-bottom:var(--space-3);border:1px solid var(--color-divider)}.pl-bar span{height:100%}.pl-legend{display:flex;flex-wrap:wrap;gap:var(--space-2) var(--space-3);margin-bottom:var(--space-3);font-size:9px;color:var(--color-text-muted)}.pl-legend .dot{width:7px;height:7px;border-radius:2px;display:inline-block;margin-right:3px}.pl-note{font-size:var(--text-xs);color:var(--color-text-faint);background:var(--color-surface-offset);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);margin-bottom:var(--space-3)}
+.settings-overlay{position:fixed;inset:0;background:oklch(.1 0 0/.45);opacity:0;pointer-events:none;transition:opacity var(--transition-interactive);z-index:50}.settings-overlay.open{opacity:1;pointer-events:auto}.settings-drawer{position:fixed;top:0;right:0;height:100%;width:min(420px,100%);background:var(--color-surface);border-left:1px solid var(--color-border);z-index:51;transform:translateX(100%);transition:transform 320ms cubic-bezier(.16,1,.3,1);overflow-y:auto}.settings-drawer.open{transform:translateX(0)}.settings-header{position:sticky;top:0;background:var(--color-surface);padding:var(--space-4);border-bottom:1px solid var(--color-divider);display:flex;justify-content:space-between;align-items:center}.settings-header h3{font-size:var(--text-sm);font-weight:600;font-family:var(--font-body)}.settings-body{padding:var(--space-4)}.lock-screen{padding:var(--space-8) var(--space-4);text-align:center}.lock-screen p{color:var(--color-text-muted);font-size:var(--text-sm);margin-bottom:var(--space-3)}.lock-screen input{width:100%;max-width:200px;padding:var(--space-2);border:1px solid var(--color-border);border-radius:var(--radius-md);text-align:center;background:var(--color-surface-2);margin-bottom:var(--space-2)}.lock-btn{background:var(--color-primary);color:var(--color-text-inverse);padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);font-weight:600;font-size:var(--text-sm)}.lock-error{color:var(--color-error);font-size:var(--text-xs);height:16px;margin-bottom:var(--space-2)}.param-group{margin-bottom:var(--space-5)}.param-group h4{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.03em;color:var(--color-text-faint);margin-bottom:var(--space-2)}.param-row{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);padding:var(--space-2) 0;border-bottom:1px solid var(--color-divider)}.param-row label{font-size:var(--text-xs);color:var(--color-text-muted);flex:1}.param-row input{width:100px;padding:var(--space-1) var(--space-2);border:1px solid var(--color-border);border-radius:var(--radius-sm);text-align:right;background:var(--color-surface-2);font-size:var(--text-xs)}.param-note{font-size:var(--text-xs);color:var(--color-text-faint);background:var(--color-surface-offset);padding:var(--space-3);border-radius:var(--radius-md);margin-bottom:var(--space-4)}.reset-btn{width:100%;padding:var(--space-2);border-radius:var(--radius-md);border:1px solid var(--color-border);color:var(--color-text-muted);font-size:var(--text-xs)}
+.mobile-summary{display:none}@media (max-width:860px){.mobile-summary{position:sticky;bottom:0;background:var(--color-surface);border-top:1px solid var(--color-border);padding:var(--space-2) var(--space-4);align-items:center;justify-content:space-between;z-index:15}.mobile-summary .lbl{font-size:var(--text-xs);color:var(--color-text-muted)}.mobile-summary .val{font-size:var(--text-lg);font-weight:700;color:var(--color-primary)}}
+</style>
+</head>
+<body>
+<div class="dashboard">
+<header class="topbar">
+<div class="brand"><svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect x="1" y="1" width="30" height="30" rx="8" fill="var(--color-primary)"/><path d="M9 21 L16 9 L23 21" stroke="var(--color-text-inverse)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="16" cy="17.5" r="1.6" fill="var(--color-text-inverse)"/></svg><div class="brand-name">Налоговый навигатор<small>Сравнение режимов для ИП и ООО</small></div></div>
+<div class="topbar-actions"><button class="iconbtn" data-theme-toggle aria-label="Переключить тему"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button><button class="iconbtn" id="openSettings" aria-label="Параметры законодательства"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
+</header>
+<aside class="col col-inputs">
+<h2 class="panel-title">Исходные данные</h2>
+<div class="field"><label>Форма</label><div class="segmented"><button type="button" class="active" data-form="ИП">ИП</button><button type="button" data-form="ООО">ООО</button></div></div>
+<div class="field"><label>Выручка (с НДС)</label><div class="input-wrap"><input type="number" id="revenue" value="12000000" min="0" step="10000"><span class="input-suffix">₽</span></div></div>
+<div class="field"><label>Перем. расходы — сумма</label><div class="input-wrap"><input type="number" id="varCost" value="6000000" min="0" step="10000"><span class="input-suffix">₽</span></div></div>
+<div class="field"><label>Доля перем. расходов с НДС<span class="range-val tnum" id="varVatShareVal">60%</span></label><div class="range-row"><input type="range" id="varVatShare" min="0" max="100" value="60"></div></div>
+<div class="field"><label>Пост. расходы — сумма</label><div class="input-wrap"><input type="number" id="fixCost" value="2000000" min="0" step="10000"><span class="input-suffix">₽</span></div></div>
+<div class="field"><label>Доля пост. расходов с НДС<span class="range-val tnum" id="fixVatShareVal">40%</span></label><div class="range-row"><input type="range" id="fixVatShare" min="0" max="100" value="40"></div></div>
+<div class="field"><label>Страховые взносы за работников (общий тариф)</label><div class="input-wrap"><input type="number" id="staffContrib" value="600000" min="0" step="10000"><span class="input-suffix">₽</span></div></div>
+<div class="field-hint" id="ipContribHint"></div>
+<div class="field-hint" id="ausnHint"></div>
+</aside>
+<main class="col col-main"><div class="kpi-strip" id="kpiStrip"></div><div class="section-title"><h2>Сравнение чистой прибыли по режимам</h2></div><div class="regime-grid" id="regimeGrid"></div><div class="section-title"><h2>Наглядное сравнение</h2></div><div class="chart-wrap"><div class="chart-canvas-holder"><canvas id="mainChart"></canvas></div></div></main>
+<aside class="col col-detail"><h2 class="panel-title">Детальный P&amp;L</h2><div class="detail-tabs" id="detailTabs"></div><div id="plBarLegendHolder"></div><table class="pl-table" id="plTable"></table></aside>
+</div>
+<div class="mobile-summary" id="mobileSummary"><span class="lbl">Лучший режим</span><span class="val tnum" id="mobileSummaryVal">—</span></div>
+<div class="settings-overlay" id="detailOverlay"></div>
+<div class="settings-drawer" id="detailDrawer"><div class="settings-header"><h3>Детальный P&amp;L</h3><button class="iconbtn" id="closeDetail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="settings-body"><div class="detail-tabs" id="detailTabsMobile"></div><div id="plBarLegendHolderMobile"></div><table class="pl-table" id="plTableMobile"></table></div></div>
+<div class="settings-overlay" id="settingsOverlay"></div>
+<div class="settings-drawer" id="settingsDrawer"><div class="settings-header"><h3>Параметры законодательства</h3><button class="iconbtn" id="closeSettings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div id="lockScreen" class="lock-screen"><p>Изменяйте только если обновилось законодательство.</p><input type="password" id="lockPass" placeholder="Код доступа"><div class="lock-error" id="lockError"></div><button class="lock-btn" id="lockSubmit">Открыть настройки</button></div><div class="settings-body" id="settingsBody" style="display:none"><div class="param-note">Изменяются только числовые параметры закона, формулы расчёта остаются неизменными.</div><div class="param-group"><h4>Ставки</h4><div class="param-row"><label>УСН «Доходы»</label><input type="number" step="0.1" id="p_usn_d"></div><div class="param-row"><label>УСН «Доходы − Расходы»</label><input type="number" step="0.1" id="p_usn_dr"></div><div class="param-row"><label>УСН Д−Р, мин. налог</label><input type="number" step="0.1" id="p_usn_dr_min"></div><div class="param-row"><label>АУСН «Доходы»</label><input type="number" step="0.1" id="p_ausn_d"></div><div class="param-row"><label>АУСН «Доходы − Расходы»</label><input type="number" step="0.1" id="p_ausn_dr"></div><div class="param-row"><label>АУСН Д−Р, мин. налог</label><input type="number" step="0.1" id="p_ausn_dr_min"></div><div class="param-row"><label>Налог на прибыль ООО</label><input type="number" step="0.1" id="p_osno_oo"></div></div><div class="param-group"><h4>НДС</h4><div class="param-row"><label>Пониженный НДС 1</label><input type="number" step="0.1" id="p_vat_low1"></div><div class="param-row"><label>Пониженный НДС 2</label><input type="number" step="0.1" id="p_vat_low2"></div><div class="param-row"><label>Порог 5% → 7%</label><input type="number" step="100000" id="p_vat_threshold"></div><div class="param-row"><label>Стандартный НДС</label><input type="number" step="0.1" id="p_vat_std"></div></div><div class="param-group"><h4>Взносы ИП за себя (ст. 430 НК РФ)</h4><div class="param-row"><label>Фиксированная часть</label><input type="number" step="1" id="p_ip_fixed"></div><div class="param-row"><label>Порог для 1% взноса</label><input type="number" step="1000" id="p_ip_threshold"></div><div class="param-row"><label>Ставка взноса с превышения</label><input type="number" step="0.1" id="p_ip_rate"></div><div class="param-row"><label>Максимум переменной части (1%)</label><input type="number" step="1" id="p_ip_varmax"></div><div class="param-row"><label>Максимум взносов всего</label><input type="number" step="1" id="p_ip_totalmax"></div></div><div class="param-group"><h4>Вычет УСН «Доходы» — лимит при наличии работников / для ООО (п.3.1 ст.346.21 НК РФ)</h4><div class="param-row"><label>Лимит уменьшения (с работниками / ООО)</label><input type="number" step="1" id="p_deduction_cap"></div></div><div class="param-group"><h4>АУСН — взносы (ст. 18 ФЗ №17-ФЗ от 25.02.2022)</h4><div class="param-row"><label>Фикс. взнос на травматизм в год</label><input type="number" step="1" id="p_ausn_injury"></div></div><button class="reset-btn" id="resetParams">Сбросить по умолчанию</button></div></div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+(function(){const t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;let d=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';r.setAttribute('data-theme',d);t.addEventListener('click',()=>{d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);renderAll();});})();
+
+/* Параметры законодательства РФ на 2026 год — редактируемы через скрытую панель настроек.
+   УСН «Доходы» (п.3.1 ст.346.21 НК РФ): взносы НЕ уменьшают базу (базой остаётся вся выручка),
+   а вычитаются из уже начисленного налога. ИП без работников — вычет до 100% (можно обнулить налог).
+   ИП с работниками ИЛИ любое ООО — совокупный вычет (свои взносы ИП + взносы за работников)
+   не может превышать 50% от начисленного налога (письма ФНС №СД-4-3/12200@, №СД-4-3/4104@).
+   УСН «Доходы минус расходы», ОСНО — взносы учитываются как обычный расход, уменьшающий базу, без лимита 50%.
+   АУСН (ст.18 ФЗ №17-ФЗ от 25.02.2022): ИП НЕ платит фиксированные взносы за себя; работодатель НЕ платит
+   страховые взносы по единому тарифу за работников — платится только фиксированный взнос на травматизм
+   (в 2026 году 2 959 руб/год), который не зависит от числа сотрудников. Расходы на АУСН «Доходы» вообще
+   не учитываются при расчёте налога. */
+const DEFAULT_PARAMS={usn_d:6,usn_dr:15,usn_dr_min:1,ausn_d:8,ausn_dr:20,ausn_dr_min:3,osno_oo:25,ndfl:[{rate:13,cap:2400000},{rate:15,cap:5000000},{rate:18,cap:20000000},{rate:20,cap:50000000},{rate:22,cap:Infinity}],vat_low1:5,vat_low2:7,vat_threshold:272500000,vat_std:22,ip_fixed:57390,ip_threshold:300000,ip_rate:1,ip_varmax:321818,ip_totalmax:379208,deduction_cap:50,ausn_injury:2959};
+let P=JSON.parse(JSON.stringify(DEFAULT_PARAMS));
+function ndfl(income){if(income<=0)return 0;let prevCap=0,acc=0;for(const step of P.ndfl){if(income<=step.cap)return acc+(income-prevCap)*step.rate/100;acc+=(step.cap-prevCap)*step.rate/100;prevCap=step.cap}return acc}
+
+function computeAll(inputs){
+ const{form,revenue,varCost,varVatShare,fixCost,fixVatShare,staffContrib}=inputs;
+ const varVat=varCost*varVatShare/100,varNoVat=varCost*(1-varVatShare/100),fixVat=fixCost*fixVatShare/100,fixNoVat=fixCost*(1-fixVatShare/100);
+
+ let ipContrib=0;
+ if(form==='ИП'){
+   const varPart=Math.min(Math.max((revenue-P.ip_threshold)*P.ip_rate/100,0),P.ip_varmax);
+   ipContrib=Math.min(P.ip_fixed+varPart,P.ip_totalmax);
+ }
+ const ownIpContribExpense=form==='ИП'?ipContrib:0;
+ const hasEmployees=staffContrib>0;
+
+ // Бухгалтерская (реальная) прибыль до налога для режимов, где взносы учитываются как расход, уменьшающий базу.
+ const grossBaseNoContrib=revenue-varVat-varNoVat;
+ const opBeforeTax=grossBaseNoContrib-fixVat-fixNoVat-staffContrib-ownIpContribExpense;
+
+ let rev5=revenue<=P.vat_threshold?revenue/(1+P.vat_low1/100):P.vat_threshold/(1+P.vat_low1/100)+(revenue-P.vat_threshold)/(1+P.vat_low2/100);
+ const op5=rev5-varCost-fixCost-staffContrib-ownIpContribExpense;
+
+ const rev22=revenue/(1+P.vat_std/100),varVat22=varVat/(1+P.vat_std/100),fixVat22=fixVat/(1+P.vat_std/100),gross22=rev22-varVat22-varNoVat,op22=gross22-fixVat22-fixNoVat-staffContrib-ownIpContribExpense;
+
+ // УСН «Доходы»: налог считается от ВЫРУЧКИ (база не уменьшается взносами), взносы — отдельный вычет из налога.
+ function usnD(base,opAfterContrib){
+   const calcBeforeDeduction=base*P.usn_d/100;
+   const contribPool=(form==='ИП'?ipContrib:0)+staffContrib;
+   const capPct=(form==='ИП'&&!hasEmployees)?100:P.deduction_cap; // 100% ИП без работников; 50% — ИП с работниками ИЛИ любое ООО
+   const maxDeduction=calcBeforeDeduction*capPct/100;
+   const deduction=Math.min(contribPool,maxDeduction);
+   const tax=Math.max(calcBeforeDeduction-deduction,0);
+   return{calcBeforeDeduction,contribPool,capPct,deduction,tax,net:opAfterContrib-tax};
+ }
+ function usnDR(base,op){const reg=op*P.usn_dr/100;const min=base*P.usn_dr_min/100;const tax=Math.max(0,Math.max(reg,min));return{tax,net:op-tax}}
+ function osno(op){const tax=form==='ООО'?Math.max(op*P.osno_oo/100,0):ndfl(op);return{tax,net:op-tax}}
+ // АУСН: ИП не платит взносы за себя; работодатель платит только фикс. взнос на травматизм (не зависит от числа сотрудников);
+ // расходы (включая взносы) не участвуют в расчёте налога на АУСН «Доходы».
+ function ausnOp(revenueBase){return revenueBase-varCost-fixCost-(hasEmployees?P.ausn_injury:0)}
+ function ausnD(opAusn){const tax=revenue>0?revenue*P.ausn_d/100:0;return{tax,net:opAusn-tax}}
+ function ausnDR(opAusn){const reg=Math.max(0,opAusn)*P.ausn_dr/100;const min=revenue*P.ausn_dr_min/100;const tax=Math.max(reg,min);return{tax,net:opAusn-tax}}
+
+ const opAusn=ausnOp(revenue);
+ const u0=usnD(revenue,opBeforeTax),u5=usnD(rev5,op5),u22=usnD(rev22,op22);
+ const results={
+  usn_d_0:{...u0,label:'УСН «Доходы»',vat:'НДС 0%'},
+  usn_d_5:{...u5,label:'УСН «Доходы»',vat:'НДС 5%'},
+  usn_d_22:{...u22,label:'УСН «Доходы»',vat:'НДС 22%'},
+  usn_dr_0:{...usnDR(revenue,opBeforeTax),label:'УСН «Доходы − Расходы»',vat:'НДС 0%'},
+  usn_dr_5:{...usnDR(rev5,op5),label:'УСН «Доходы − Расходы»',vat:'НДС 5%'},
+  usn_dr_22:{...usnDR(rev22,op22),label:'УСН «Доходы − Расходы»',vat:'НДС 22%'},
+  osno_0:{...osno(opBeforeTax),label:'ОСНО',vat:'НДС 0%'},
+  osno_22:{...osno(op22),label:'ОСНО',vat:'НДС 22%'},
+  ausn_d:{...ausnD(opAusn),label:'АУСН «Доходы»',vat:'НДС 0%'},
+  ausn_dr:{...ausnDR(opAusn),label:'АУСН «Доходы − Расходы»',vat:'НДС 0%'}
+ };
+ const pl={
+  '0':{revenue,varVat,varNoVat,gross:grossBaseNoContrib,fixVat,fixNoVat,staffContrib,ownIpContrib:ownIpContribExpense,opBeforeTax},
+  '5':{revenue:rev5,varVat:varCost*varVatShare/100,varNoVat,gross:rev5-varCost,fixVat:fixCost*fixVatShare/100,fixNoVat,staffContrib,ownIpContrib:ownIpContribExpense,opBeforeTax:op5},
+  '22':{revenue:rev22,varVat:varVat22,varNoVat,gross:gross22,fixVat:fixVat22,fixNoVat,staffContrib,ownIpContrib:ownIpContribExpense,opBeforeTax:op22},
+  'ausn':{revenue,varVat:0,varNoVat:varCost,fixVat:0,fixNoVat:fixCost,injuryContrib:hasEmployees?P.ausn_injury:0,opBeforeTax:opAusn}
+ };
+ return{results,pl,ipContrib,hasEmployees};
+}
+
+const REGIME_KEYS=['usn_d_0','usn_d_5','usn_d_22','usn_dr_0','usn_dr_5','usn_dr_22','osno_0','osno_22','ausn_d','ausn_dr'];
+const PL_MODE_BY_KEY={usn_d_0:'0',usn_d_5:'5',usn_d_22:'22',usn_dr_0:'0',usn_dr_5:'5',usn_dr_22:'22',osno_0:'0',osno_22:'22',ausn_d:'ausn',ausn_dr:'ausn'};
+const IS_USN_D={usn_d_0:1,usn_d_5:1,usn_d_22:1};
+const IS_AUSN={ausn_d:1,ausn_dr:1};
+const fmt=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(n));
+const fmtSigned=n=>(n>=0?'+':'')+fmt(n);
+let selectedRegime='usn_d_0';let chart;const isMobile=()=>window.innerWidth<=860;const getCss=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function getInputs(){return{form:document.querySelector('.segmented button.active').dataset.form,revenue:+revenue.value||0,varCost:+varCost.value||0,varVatShare:+varVatShare.value,fixCost:+fixCost.value||0,fixVatShare:+fixVatShare.value,staffContrib:+staffContrib.value||0}}
+
+function renderAll(){
+ const inputs=getInputs();const{results,pl,ipContrib,hasEmployees}=computeAll(inputs);
+ ipContribHint.textContent=inputs.form==='ИП'?`Расчётные взносы ИП за себя: ${fmt(ipContrib)} ₽ (фикс. 57 390 ₽ + 1% с дохода свыше 300 000 ₽, максимум 379 208 ₽ всего). Не применяется на АУСН.`:'';
+ ausnHint.textContent=`На АУСН взносы за себя (ИП) не платятся, а взносы за работников заменены фикс. взносом на травматизм ${fmt(P.ausn_injury)} ₽/год.`;
+ const netVals=REGIME_KEYS.map(k=>results[k].net);const bestKey=REGIME_KEYS.find(k=>results[k].net===Math.max(...netVals));const best=results[bestKey];const worstKey=REGIME_KEYS.reduce((a,b)=>results[a].net<results[b].net?a:b);const worst=results[worstKey];
+ kpiStrip.innerHTML=`<div class="kpi highlight"><div class="kpi-label">Лучший вариант</div><div class="kpi-value tnum">${fmt(best.net)} ₽</div><div class="best-badge">${best.label} · ${best.vat}</div></div><div class="kpi"><div class="kpi-label">Разница лучший / худший</div><div class="kpi-value tnum">${fmt(best.net-worst.net)} ₽</div><div class="kpi-sub">Худший: ${worst.label} · ${worst.vat}</div></div><div class="kpi"><div class="kpi-label">Налоговая нагрузка</div><div class="kpi-value tnum">${inputs.revenue>0?((best.tax/inputs.revenue)*100).toFixed(1):'0'}%</div><div class="kpi-sub">от выручки, лучший режим</div></div>`;
+ mobileSummaryVal.textContent=`${fmt(best.net)} ₽`;
+
+ regimeGrid.innerHTML=REGIME_KEYS.map(k=>{const r=results[k],isBest=k===bestKey,isNeg=r.net<0,barPct=Math.max(4,Math.abs(r.net)/Math.max(...REGIME_KEYS.map(x=>Math.abs(results[x].net)),1)*100);return `<div class="regime-card ${isBest?'best':''}" data-key="${k}"><div class="regime-name">${r.label}</div><div class="regime-vat">${r.vat}</div><div class="regime-profit ${isNeg?'neg':''} tnum">${fmt(r.net)} ₽</div><div class="regime-bar-track"><div class="regime-bar-fill" style="width:${barPct}%;background:${isNeg?'var(--color-error)':'var(--color-primary)'}"></div></div><div class="regime-margin tnum">Налог: ${fmt(r.tax)} ₽</div></div>`}).join('');
+ document.querySelectorAll('.regime-card').forEach(card=>card.onclick=()=>{selectedRegime=card.dataset.key;renderDetail(inputs,results,pl,hasEmployees);if(isMobile())openDetailDrawer()});
+
+ if(chart)chart.destroy();
+ chart=new Chart(mainChart.getContext('2d'),{type:'bar',data:{labels:REGIME_KEYS.map(k=>results[k].label+' · '+results[k].vat),datasets:[{data:REGIME_KEYS.map(k=>results[k].net),backgroundColor:REGIME_KEYS.map(k=>k===bestKey?getCss('--color-primary'):(results[k].net<0?getCss('--color-error'):getCss('--color-surface-dynamic'))),borderRadius:6,maxBarThickness:40}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:getCss('--color-text-muted'),font:{size:10},autoSkip:false,maxRotation:60,minRotation:isMobile()?60:45},grid:{display:false}},y:{ticks:{color:getCss('--color-text-muted'),font:{size:10},callback:v=>fmt(v)},grid:{color:getCss('--color-divider')}}},onClick:(e,els)=>{if(els.length){selectedRegime=REGIME_KEYS[els[0].index];renderDetail(inputs,results,pl,hasEmployees);if(isMobile())openDetailDrawer()}}}});
+
+ renderDetailTabs(results,pl,hasEmployees);renderDetail(inputs,results,pl,hasEmployees);
+}
+
+function renderDetailTabs(results,pl,hasEmployees){const html=REGIME_KEYS.map(k=>`<button type="button" class="detail-tab ${k===selectedRegime?'active':''}" data-key="${k}">${results[k].label} · ${results[k].vat}</button>`).join('');['detailTabs','detailTabsMobile'].forEach(id=>{const el=document.getElementById(id);el.innerHTML=html;el.querySelectorAll('.detail-tab').forEach(btn=>btn.onclick=()=>{selectedRegime=btn.dataset.key;const inputs=getInputs();const x=computeAll(inputs);renderDetailTabs(x.results,x.pl,x.hasEmployees);renderDetail(inputs,x.results,x.pl,x.hasEmployees)})})}
+
+function renderDetail(inputs,results,pl,hasEmployees){
+ document.querySelectorAll('.detail-tab').forEach(b=>b.classList.toggle('active',b.dataset.key===selectedRegime));
+ const isUsnD=!!IS_USN_D[selectedRegime];
+ const isAusn=!!IS_AUSN[selectedRegime];
+ const p=pl[PL_MODE_BY_KEY[selectedRegime]],r=results[selectedRegime],rev=(isAusn?inputs.revenue:p.revenue)||1;
+ let rows,noteText,segs;
+ if(isUsnD){
+   rows=[
+     ['Выручка (= налоговая база УСН «Доходы»)',p.revenue],
+     ['Налог, начисленный от базы (до вычета взносов)',-r.calcBeforeDeduction,'subtotal'],
+     ['— Взносы за работников (в пуле вычета)',p.staffContrib],
+     ...(inputs.form==='ИП'?[['— Взносы ИП за себя (в пуле вычета)',p.ownIpContrib]]:[]),
+     ['Вычет из налога (лимит '+r.capPct+'% от начисленного налога)',r.deduction,'ded'],
+     ['Налог к уплате (после вычета)',-r.tax,'tax'],
+     ['Прочие реальные расходы бизнеса ниже — на сумму налога не влияют:',0,'info'],
+     ['Перем. расходы с НДС',-p.varVat],['Перем. расходы без НДС',-p.varNoVat],['Пост. расходы с НДС',-p.fixVat],['Пост. расходы без НДС',-p.fixNoVat],
+     ['Чистая прибыль (выручка минус все расходы, взносы и налог)',r.net,'net']
+   ];
+   noteText=inputs.form==='ИП'&&!hasEmployees?'ИП без работников на УСН «Доходы»: налог считается от полной выручки, взносы за себя вычитаются из САМОГО НАЛОГА без ограничения — вплоть до нуля (п.3.1 ст.346.21 НК РФ).':'Взносы не уменьшают налоговую базу (базой остаётся вся выручка) — они вычитаются из уже начисленного налога. Для ИП с работниками и для ЛЮБОГО ООО общий вычет (свои взносы ИП + взносы за работников) не может превышать 50% от начисленного налога (п.3.1 ст.346.21 НК РФ, письмо ФНС №СД-4-3/4104@). Если налог начислен, например, в 60 000 ₽, вычет ограничен 30 000 ₽, даже если фактических взносов больше.';
+   segs=[{v:p.varVat,c:'var(--color-blue)',l:'Перем. с НДС'},{v:p.varNoVat,c:'var(--color-purple)',l:'Перем. без НДС'},{v:p.fixVat,c:'var(--color-gold)',l:'Пост. с НДС'},{v:p.fixNoVat,c:'var(--color-warning)',l:'Пост. без НДС'},{v:Math.max(r.tax,0),c:'var(--color-error)',l:'Налог к уплате'},{v:Math.max(r.net,0),c:'var(--color-primary)',l:'Чистая прибыль'}];
+ } else if(isAusn){
+   rows=[
+     ['Выручка',p.revenue],['Перем. расходы (полная сумма, без деления по НДС)',-p.varNoVat],['Пост. расходы (полная сумма, без деления по НДС)',-p.fixNoVat],
+     ...(hasEmployees?[['Фикс. взнос на травматизм (не зависит от числа сотрудников)',-p.injuryContrib]]:[]),
+     ['Прибыль до налога',p.opBeforeTax,'total'],
+     ['Налог ('+r.label+', '+r.vat+')',-r.tax,'tax'],
+     ['Чистая прибыль',r.net,'net']
+   ];
+   noteText='АУСН (ст.18 ФЗ №17-ФЗ): ИП не уплачивает фиксированные взносы за себя, работодатель не платит страховые взносы по единому тарифу за работников — только фикс. взнос на травматизм '+fmt(P.ausn_injury)+' ₽/год, не зависящий от количества сотрудников. НДС на АУСН не применяется.';
+   segs=[{v:p.varNoVat,c:'var(--color-purple)',l:'Перем. расходы'},{v:p.fixNoVat,c:'var(--color-warning)',l:'Пост. расходы'},...(hasEmployees?[{v:p.injuryContrib,c:'var(--color-surface-dynamic)',l:'Взнос на травматизм'}]:[]),{v:Math.max(r.tax,0),c:'var(--color-error)',l:'Налог к уплате'},{v:Math.max(r.net,0),c:'var(--color-primary)',l:'Чистая прибыль'}];
+ } else {
+   rows=[['Выручка',p.revenue],['Перем. расходы с НДС',-p.varVat],['Перем. расходы без НДС',-p.varNoVat],['Валовая прибыль',p.gross,'total'],['Пост. расходы с НДС',-p.fixVat],['Пост. расходы без НДС',-p.fixNoVat],['Страховые взносы за работников',-(p.staffContrib||0)],...(inputs.form==='ИП'?[['Страховые взносы ИП за себя',-(p.ownIpContrib||0)]]:[]),['Прибыль до налога',p.opBeforeTax,'total'],['Налог ('+r.label+', '+r.vat+')',-r.tax,'tax'],['Чистая прибыль',r.net,'net']];
+   noteText=selectedRegime.startsWith('osno')&&inputs.form==='ИП'?'ИП на ОСНО учитывает взносы за себя в составе профессионального вычета по НДФЛ без ограничения 50% (ст. 221 НК РФ).':'На данном режиме взносы учитываются как обычный расход, уменьшающий налоговую базу, без ограничения 50%.';
+   segs=[{v:p.varVat,c:'var(--color-blue)',l:'Перем. с НДС'},{v:p.varNoVat,c:'var(--color-purple)',l:'Перем. без НДС'},{v:p.fixVat,c:'var(--color-gold)',l:'Пост. с НДС'},{v:p.fixNoVat,c:'var(--color-warning)',l:'Пост. без НДС'},{v:(p.staffContrib||0),c:'var(--color-surface-dynamic)',l:'Взносы за работников'},...(inputs.form==='ИП'?[{v:(p.ownIpContrib||0),c:'var(--color-primary-highlight)',l:'Взносы ИП за себя'}]:[]),{v:Math.max(r.tax,0),c:'var(--color-error)',l:'Налог к уплате'},{v:Math.max(r.net,0),c:'var(--color-primary)',l:'Чистая прибыль'}];
+ }
+ const tableHtml=rows.map(([label,val,cls])=>`<tr class="${cls||''}"><td>${label}</td><td class="tnum">${cls==='info'?'':fmtSigned(val)+' ₽'}</td><td class="tnum">${cls!=='info'&&rev?(Math.abs(val)/rev*100).toFixed(1)+'%':''}</td></tr>`).join('');
+ plTable.innerHTML=tableHtml;plTableMobile.innerHTML=tableHtml;
+ const noteHolders=[document.getElementById('plBarLegendHolder'),document.getElementById('plBarLegendHolderMobile')];
+ const barHtml=`${noteText?`<div class="pl-note">${noteText}</div>`:''}<div class="pl-bar">${segs.map(s=>`<span style="width:${Math.max(0,s.v/rev*100)}%;background:${s.c}"></span>`).join('')}</div><div class="pl-legend">${segs.map(s=>`<span><span class="dot" style="background:${s.c}"></span>${s.l}</span>`).join('')}</div>`;
+ noteHolders.forEach(h=>h.innerHTML=barHtml);
+}
+
+for(const btn of document.querySelectorAll('.segmented button'))btn.onclick=()=>{document.querySelectorAll('.segmented button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAll()};
+for(const id of ['revenue','varCost','fixCost','staffContrib'])document.getElementById(id).addEventListener('input',renderAll);
+for(const id of ['varVatShare','fixVatShare'])document.getElementById(id).addEventListener('input',e=>{document.getElementById(id+'Val').textContent=e.target.value+'%';renderAll()});
+
+const detailOverlay=document.getElementById('detailOverlay'),detailDrawer=document.getElementById('detailDrawer');
+function openDetailDrawer(){detailOverlay.classList.add('open');detailDrawer.classList.add('open')}
+function closeDetailDrawer(){detailOverlay.classList.remove('open');detailDrawer.classList.remove('open')}
+closeDetail.onclick=closeDetailDrawer;detailOverlay.onclick=closeDetailDrawer;
+
+const overlay=document.getElementById('settingsOverlay'),drawer=document.getElementById('settingsDrawer'),ACCESS_CODE='2026';
+function openDrawer(){overlay.classList.add('open');drawer.classList.add('open')}
+function closeDrawer(){overlay.classList.remove('open');drawer.classList.remove('open')}
+openSettings.onclick=openDrawer;closeSettings.onclick=closeDrawer;overlay.onclick=closeDrawer;
+lockSubmit.onclick=()=>{if(lockPass.value===ACCESS_CODE){lockScreen.style.display='none';settingsBody.style.display='block';fillParamForm()}else lockError.textContent='Неверный код доступа'};
+
+function fillParamForm(){p_usn_d.value=P.usn_d;p_usn_dr.value=P.usn_dr;p_usn_dr_min.value=P.usn_dr_min;p_ausn_d.value=P.ausn_d;p_ausn_dr.value=P.ausn_dr;p_ausn_dr_min.value=P.ausn_dr_min;p_osno_oo.value=P.osno_oo;p_vat_low1.value=P.vat_low1;p_vat_low2.value=P.vat_low2;p_vat_threshold.value=P.vat_threshold;p_vat_std.value=P.vat_std;p_ip_fixed.value=P.ip_fixed;p_ip_threshold.value=P.ip_threshold;p_ip_rate.value=P.ip_rate;p_ip_varmax.value=P.ip_varmax;p_ip_totalmax.value=P.ip_totalmax;p_deduction_cap.value=P.deduction_cap;p_ausn_injury.value=P.ausn_injury;['p_usn_d','p_usn_dr','p_usn_dr_min','p_ausn_d','p_ausn_dr','p_ausn_dr_min','p_osno_oo','p_vat_low1','p_vat_low2','p_vat_threshold','p_vat_std','p_ip_fixed','p_ip_threshold','p_ip_rate','p_ip_varmax','p_ip_totalmax','p_deduction_cap','p_ausn_injury'].forEach(id=>document.getElementById(id).oninput=applyParamForm)}
+function applyParamForm(){P.usn_d=+p_usn_d.value;P.usn_dr=+p_usn_dr.value;P.usn_dr_min=+p_usn_dr_min.value;P.ausn_d=+p_ausn_d.value;P.ausn_dr=+p_ausn_dr.value;P.ausn_dr_min=+p_ausn_dr_min.value;P.osno_oo=+p_osno_oo.value;P.vat_low1=+p_vat_low1.value;P.vat_low2=+p_vat_low2.value;P.vat_threshold=+p_vat_threshold.value;P.vat_std=+p_vat_std.value;P.ip_fixed=+p_ip_fixed.value;P.ip_threshold=+p_ip_threshold.value;P.ip_rate=+p_ip_rate.value;P.ip_varmax=+p_ip_varmax.value;P.ip_totalmax=+p_ip_totalmax.value;P.deduction_cap=+p_deduction_cap.value;P.ausn_injury=+p_ausn_injury.value;renderAll()}
+resetParams.onclick=()=>{P=JSON.parse(JSON.stringify(DEFAULT_PARAMS));fillParamForm();renderAll()};
+renderAll();window.addEventListener('resize',()=>chart&&chart.resize());
+</script>
+</body>
+</html>
